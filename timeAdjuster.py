@@ -1,10 +1,16 @@
 import os
 import ctypes
+import ctypes.util
 import sys
 import time
 import datetime
 import requests
-from urllib.parse import urlencode
+
+total_count = 20
+utcToLocal = +8  # Only Linux
+true = True
+false = False
+null = ''
 
 if sys.platform == 'win32' and not ctypes.windll.shell32.IsUserAnAdmin():
     ctypes.windll.shell32.ShellExecuteW(
@@ -21,9 +27,6 @@ def _win_set_time(time_tuple):
 
 
 def _linux_set_time(time_tuple):
-    import ctypes
-    import ctypes.util
-    import time
     CLOCK_REALTIME = 0
 
     class timespec(ctypes.Structure):
@@ -33,21 +36,15 @@ def _linux_set_time(time_tuple):
     ts = timespec()
     ts.tv_sec = int(time.mktime(
         datetime.datetime(*time_tuple[:6]).timetuple()))
-    ts.tv_nsec = time_tuple[6] * 1000000  # Millisecond to nanosecond
+    ts.tv_nsec = time_tuple[6] * 1000000
     librt.clock_settime(CLOCK_REALTIME, ctypes.byref(ts))
 
 
 def main():
     while True:
-        max = 10000
         time_count = 0
         sum = 0
         ave = 0
-        total_count = 20
-        utcToLocal = +8
-        true = True
-        false = False
-        null = ''
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
             'Accept-Language': 'en-US,en;q=0.9',
@@ -92,8 +89,6 @@ def main():
                     d = remote_time - time_timer * 1000
                     print('ServerTime:', remote_time, '-',
                           'LocalTime', time_timer, '=', d, '\n')
-                    if d < max:
-                        max = d
                     time.sleep(0.2)
                     time_count += 1
                     sum += d

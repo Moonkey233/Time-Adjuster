@@ -51,20 +51,20 @@ def main():
             'Accept-Encoding': 'gzip',
             'Connection': 'keep-alive'
         }
-        source = input('\n请输入时间源服务器: [0]退出 [1]淘宝 [2]京东 [3]B站\nINPUT: ')
+        source = input('\n请输入时间源服务器: [0]退出 [1]淘宝 [2]美团 [3]B站\nINPUT: ')
         try:
             while (int(source) < 0 or int(source) > 3):
-                source = input('输入有误, 请重新输入: [0]退出 [1]淘宝 [2]京东 [3]B站\nINPUT: ')
+                source = input('输入有误, 请重新输入: [0]退出 [1]淘宝 [2]美团 [3]B站\nINPUT: ')
         except:
             continue
         if int(source) == 0:
             exit(0)
         elif int(source) == 1:
-            time_url = 'http://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp'
+            time_url = 'http://acs.m.taobao.com/gw/mtop.common.getTimestamp/'
             print('---淘宝时间源---\n')
         elif int(source) == 2:
-            time_url = 'https://sgm-m.jd.com/h5/'
-            print('---京东时间源---\n')
+            time_url = 'https://cube.meituan.com/ipromotion/cube/toc/component/base/getServerCurrentTime'
+            print('---美团时间源---\n')
         else:
             time_url = 'https://app.bilibili.com/x/v2/splash/show'
             print('---B站时间源---\n')
@@ -82,7 +82,7 @@ def main():
                     if int(source) == 1:
                         remote_time = float(res.json()['data']['t'])  # 淘宝
                     elif int(source) == 2:
-                        remote_time = float(res.json()['timestamp'])  # 京东
+                        remote_time = float(res.json()['data'])  # 美团
                     else:
                         remote_time = float(
                             res.json()['data']['splash_request_id'][0:13])  # B站
